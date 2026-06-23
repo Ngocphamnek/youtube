@@ -2252,8 +2252,6 @@ export default function TaiXiuPage() {
                 {onlinePlayers.toLocaleString()}
               </div>
               <span style={{color:"rgba(255,215,0,0.2)"}}>·</span>
-              <span style={{fontSize:9,fontWeight:900,color:"#FFD700",fontFamily:"monospace"}}>{fmtVN(balance)}₫</span>
-              <span style={{color:"rgba(255,215,0,0.2)"}}>·</span>
               <button onClick={()=>setShowJackpotLog(true)} style={{
                 display:"flex",alignItems:"center",gap:2,background:"none",border:"none",cursor:"pointer",padding:0,
               }}>
