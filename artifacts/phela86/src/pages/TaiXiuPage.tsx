@@ -2243,7 +2243,7 @@ export default function TaiXiuPage() {
           <div style={{position:"absolute",inset:12,display:"flex",flexDirection:"column",alignItems:"center",zIndex:1}}>
             {/* ── Compact header row: session | online | balance | jackpot ── */}
             <div style={{display:"flex",alignItems:"center",gap:4,marginBottom:2,width:"100%",justifyContent:"center",flexWrap:"wrap"}}>
-              <span style={{fontSize:8,color:"rgba(255,215,0,0.45)",letterSpacing:0.5,fontFamily:"monospace"}}>#{sessionId}</span>
+              <span style={{fontSize:12,fontWeight:800,color:"#FFD700",letterSpacing:1,fontFamily:"monospace",textShadow:"0 0 8px rgba(255,215,0,0.8)"}}>PHIÊN #{sessionId}</span>
               <span style={{color:"rgba(255,215,0,0.2)"}}>·</span>
               <div style={{display:"flex",alignItems:"center",gap:2,fontSize:8,fontWeight:700,color:"rgba(80,255,140,0.8)"}}>
                 <span style={{display:"inline-block",width:4,height:4,borderRadius:"50%",
