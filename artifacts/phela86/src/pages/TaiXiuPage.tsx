@@ -286,23 +286,43 @@ function DiceCupImg({ size=110, className="" }:{ size?:number; className?:string
 
 function DiceLidImg({ size=110, className="" }:{ size?:number; className?:string }) {
   return (
-    <img
-      src={diceLidImg}
-      draggable={false}
-      className={className}
-      style={{
-        width:size, height:size,
-        objectFit:"contain",
-        display:"block",
-        pointerEvents:"none",
-        userSelect:"none",
-        borderRadius:"50%",
-        filter:
-          "drop-shadow(0 0 18px rgba(255,160,0,0.9)) " +
-          "drop-shadow(0 0 8px rgba(200,80,0,0.7)) " +
-          "brightness(1.05) saturate(1.2)",
-      }}
-    />
+    <div className={className} style={{
+      width:size, height:size,
+      borderRadius:"50%",
+      position:"relative",
+      display:"flex",alignItems:"center",justifyContent:"center",
+      pointerEvents:"none",userSelect:"none",flexShrink:0,
+      background:"radial-gradient(circle at 38% 35%, #8B4513 0%, #5C1A00 30%, #3a0e00 60%, #1a0500 100%)",
+      boxShadow:
+        "0 0 0 4px #c8860a, " +
+        "0 0 0 7px #7a4000, " +
+        "0 0 30px rgba(255,160,0,0.8), " +
+        "0 0 60px rgba(200,80,0,0.4), " +
+        "inset 0 6px 18px rgba(255,200,100,0.25), " +
+        "inset 0 -4px 12px rgba(0,0,0,0.7)",
+    }}>
+      {/* Decorative ring */}
+      <div style={{
+        width:"72%",height:"72%",borderRadius:"50%",
+        background:"radial-gradient(circle at 40% 38%, rgba(255,200,80,0.18) 0%, transparent 70%)",
+        border:"2px solid rgba(255,180,40,0.45)",
+        display:"flex",alignItems:"center",justifyContent:"center",
+      }}>
+        {/* Inner dragon motif using SVG */}
+        <svg width={size*0.38} height={size*0.38} viewBox="0 0 60 60" fill="none">
+          <circle cx="30" cy="30" r="28" stroke="rgba(255,180,40,0.5)" strokeWidth="1.5" fill="none"/>
+          <text x="50%" y="54%" textAnchor="middle" fontSize="28" fill="rgba(255,200,60,0.7)" fontWeight="bold">龍</text>
+        </svg>
+      </div>
+      {/* Highlight glare */}
+      <div style={{
+        position:"absolute",top:"12%",left:"18%",
+        width:"30%",height:"18%",borderRadius:"50%",
+        background:"rgba(255,240,200,0.18)",
+        filter:"blur(4px)",
+        transform:"rotate(-30deg)",
+      }}/>
+    </div>
   );
 }
 
@@ -2130,7 +2150,7 @@ export default function TaiXiuPage() {
         {/* Bowl-lift animation ONLY when player manually dragged the lid off */}
         {handMode&&lidRevealedByDrag&&(
           <div className="bowl-lift" style={{position:"absolute",top:"50%",left:"50%",transform:"translate(-50%,-50%)"}}>
-            <DiceCupImg size={110}/>
+            <DiceLidImg size={110}/>
           </div>
         )}
       </div>
@@ -2162,7 +2182,7 @@ export default function TaiXiuPage() {
           }}
         >
           <div className="cup-red-glow" style={{display:"flex",flexDirection:"column",alignItems:"center"}}>
-            <DiceCupImg size={130}/>
+            <DiceLidImg size={130}/>
             <div style={{
               marginTop:2,
               color:"#FFD700",fontSize:9,fontWeight:900,whiteSpace:"nowrap",letterSpacing:1,
