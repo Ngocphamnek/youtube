@@ -2001,6 +2001,7 @@ export default function TaiXiuPage() {
       setWinResult(payout);
       setPayoutToast(payout);
       setTimeout(()=>setPayoutToast(null),4000);
+      setTaiBet(0); setXiuBet(0);
       setBetHistory(h=>[{session:sid,side,amount:betAmount,won:won&&!isLateBet,time:timeStr},...h.slice(0,49)]);
       setLeaderboard(lb=>{
         const idx=lb.findIndex(e=>e.name==="Bạn");
