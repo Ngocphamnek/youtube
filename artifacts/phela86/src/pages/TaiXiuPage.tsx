@@ -1636,6 +1636,7 @@ export default function TaiXiuPage() {
   const [chip,setChip]         = useState(0);
   const [popup,setPopup]       = useState<Popup>(null);
   const [winResult,setWinResult] = useState<{won:boolean;amount:number}|null>(null);
+  const [showResultBanner,setShowResultBanner] = useState(false);
   const [justRevealed,setJustRevealed] = useState(false);
   const [handMode,setHandMode] = useState(false);
   const [selectedSide,setSelectedSide] = useState<"TAI"|"XIU"|null>(null);
@@ -1966,6 +1967,8 @@ export default function TaiXiuPage() {
       // No bet from player — still generate session record for history
     }
     setJustRevealed(true);
+    setShowResultBanner(true);
+    setTimeout(()=>setShowResultBanner(false),3000);
     setPhase("RESULT");
     betPlacedAtRef.current=ROUND; // reset for next round
   }
@@ -2169,44 +2172,38 @@ export default function TaiXiuPage() {
         <div style={{position:"relative",width:PANEL_W,height:PANEL_H}}>
 
           {/* ── RESULT ANNOUNCEMENT BANNER ── */}
-          {phase==="RESULT"&&(
+          {showResultBanner&&(
             <div style={{
-              position:"fixed",
-              top:0,left:0,right:0,bottom:0,
-              display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",
-              zIndex:50,pointerEvents:"none",
-              background:"rgba(0,0,0,0.45)",
-              animation:"fadeIn 0.25s ease both",
+              position:"absolute",
+              top:"50%",left:"50%",
+              transform:"translate(-50%,-50%)",
+              zIndex:15,pointerEvents:"none",
+              animation:"resultSlideIn 0.4s cubic-bezier(.17,.67,.3,1.3) both",
             }}>
               <div style={{
                 background:isTai
-                  ?"linear-gradient(135deg,rgba(100,0,0,0.98),rgba(180,20,40,0.95),rgba(100,0,0,0.98))"
-                  :"linear-gradient(135deg,rgba(0,10,80,0.98),rgba(20,50,180,0.95),rgba(0,10,80,0.98))",
-                border:`3px solid ${isTai?"rgba(255,120,120,0.9)":"rgba(120,160,255,0.9)"}`,
-                borderRadius:24,
-                padding:"18px 48px 14px",
-                display:"flex",flexDirection:"column",alignItems:"center",gap:6,
+                  ?"linear-gradient(135deg,rgba(80,0,0,0.95),rgba(140,10,30,0.9),rgba(80,0,0,0.95))"
+                  :"linear-gradient(135deg,rgba(0,10,60,0.95),rgba(20,40,140,0.9),rgba(0,10,60,0.95))",
+                border:`2px solid ${isTai?"rgba(255,100,100,0.8)":"rgba(100,140,255,0.8)"}`,
+                borderRadius:16,
+                padding:"6px 22px",
+                display:"flex",flexDirection:"column",alignItems:"center",gap:2,
                 boxShadow:isTai
-                  ?"0 0 60px rgba(255,60,60,0.9),0 0 120px rgba(255,0,0,0.4)"
-                  :"0 0 60px rgba(60,120,255,0.9),0 0 120px rgba(0,60,255,0.4)",
-                backdropFilter:"blur(8px)",
-                animation:"resultSlideIn 0.4s cubic-bezier(.17,.67,.3,1.3) both",
+                  ?"0 0 30px rgba(255,60,60,0.7),0 0 60px rgba(255,0,0,0.3)"
+                  :"0 0 30px rgba(60,100,255,0.7),0 0 60px rgba(0,50,255,0.3)",
+                backdropFilter:"blur(4px)",
               }}>
                 <div style={{
-                  fontSize:56,fontWeight:900,letterSpacing:8,
-                  color:isTai?"#ff5555":"#88aaff",
+                  fontSize:26,fontWeight:900,letterSpacing:4,
+                  color:isTai?"#ff6666":"#88aaff",
                   textShadow:isTai
-                    ?"0 0 30px rgba(255,60,60,1),0 0 60px rgba(255,0,0,0.8),0 0 80px rgba(255,0,0,0.4)"
-                    :"0 0 30px rgba(80,140,255,1),0 0 60px rgba(0,80,255,0.8),0 0 80px rgba(0,60,255,0.4)",
+                    ?"0 0 20px rgba(255,60,60,1),0 0 40px rgba(255,0,0,0.6)"
+                    :"0 0 20px rgba(80,130,255,1),0 0 40px rgba(0,80,255,0.6)",
                   lineHeight:1,
-                  fontFamily:"'Arial Black',Impact,sans-serif",
                 }}>{isTai?"TÀI":"XỈU"}</div>
                 <div style={{
-                  fontSize:16,color:"rgba(255,255,255,0.85)",letterSpacing:3,fontWeight:700,
+                  fontSize:11,color:"rgba(255,255,255,0.7)",letterSpacing:2,fontWeight:700,
                 }}>TỔNG {sum} {isTai?"(11–17)":"(3–10)"}</div>
-                <div style={{fontSize:11,color:"rgba(255,215,0,0.55)",letterSpacing:1,marginTop:2}}>
-                  Phiên mới sau {resultCountdown}s
-                </div>
               </div>
             </div>
           )}
