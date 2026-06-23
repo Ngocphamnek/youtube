@@ -2508,7 +2508,7 @@ export default function TaiXiuPage() {
                   if(selectedSide==="TAI") setTaiBet(t=>t+chip);
                   else setXiuBet(x=>x+chip);
                   // Gửi cược thật lên Go server để broadcast cho tất cả người chơi
-                  wsRef.current?.send(JSON.stringify({type:"bet",side:selectedSide,amount:chip,name:"Bạn"}));
+                  if(wsRef.current?.readyState===WebSocket.OPEN) wsRef.current.send(JSON.stringify({type:"bet",side:selectedSide,amount:chip,name:"Bạn"}));
                   setChip(0);
                   setSelectedSide(null);
                 }}
@@ -2536,7 +2536,7 @@ export default function TaiXiuPage() {
                   const amt=balance;
                   if(selectedSide==="TAI") setTaiBet(t=>t+amt);
                   else setXiuBet(x=>x+amt);
-                  wsRef.current?.send(JSON.stringify({type:"bet",side:selectedSide,amount:amt,name:"Bạn"}));
+                  if(wsRef.current?.readyState===WebSocket.OPEN) wsRef.current.send(JSON.stringify({type:"bet",side:selectedSide,amount:amt,name:"Bạn"}));
                   setChip(0);
                   setSelectedSide(null);
                 }}
