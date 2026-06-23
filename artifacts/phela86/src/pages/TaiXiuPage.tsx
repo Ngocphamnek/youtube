@@ -5,6 +5,7 @@ import dragonBlueImg from "../assets/dragon-blue-ai.png";
 import treasureChestImg from "../assets/treasure-chest-ai.png";
 import casinoTableImg from "../assets/casino-table.png";
 import diceCupImg from "../assets/dice-cup-nobg.png";
+import diceLidImg from "../assets/dice-lid-top.png";
 import bgCasinoImg from "../assets/bg-casino.png";
 
 // ── Web Audio casino sounds (no external files needed) ──────────────────────
@@ -278,6 +279,28 @@ function DiceCupImg({ size=110, className="" }:{ size?:number; className?:string
           "drop-shadow(0 0 22px rgba(255,180,0,0.95)) " +
           "drop-shadow(0 0 10px rgba(255,120,0,0.8)) " +
           "brightness(1.1) saturate(1.15)",
+      }}
+    />
+  );
+}
+
+function DiceLidImg({ size=110, className="" }:{ size?:number; className?:string }) {
+  return (
+    <img
+      src={diceLidImg}
+      draggable={false}
+      className={className}
+      style={{
+        width:size, height:size,
+        objectFit:"contain",
+        display:"block",
+        pointerEvents:"none",
+        userSelect:"none",
+        borderRadius:"50%",
+        filter:
+          "drop-shadow(0 0 18px rgba(255,160,0,0.9)) " +
+          "drop-shadow(0 0 8px rgba(200,80,0,0.7)) " +
+          "brightness(1.05) saturate(1.2)",
       }}
     />
   );
@@ -1637,6 +1660,7 @@ export default function TaiXiuPage() {
   const [popup,setPopup]       = useState<Popup>(null);
   const [winResult,setWinResult] = useState<{won:boolean;amount:number}|null>(null);
   const [showResultBanner,setShowResultBanner] = useState(false);
+  const [payoutToast,setPayoutToast] = useState<{won:boolean;amount:number}|null>(null);
   const [justRevealed,setJustRevealed] = useState(false);
   const [handMode,setHandMode] = useState(false);
   const [selectedSide,setSelectedSide] = useState<"TAI"|"XIU"|null>(null);
@@ -1953,7 +1977,10 @@ export default function TaiXiuPage() {
         });
       }
       if(won&&!isLateBet) playWin(); else if(!won) playLose();
-      setWinResult({won:won&&!isLateBet,amount:isLateBet&&won?0:Math.abs(profit)});
+      const payout={won:won&&!isLateBet,amount:isLateBet&&won?0:Math.abs(profit)};
+      setWinResult(payout);
+      setPayoutToast(payout);
+      setTimeout(()=>setPayoutToast(null),4000);
       setBetHistory(h=>[{session:sid,side,amount:betAmount,won:won&&!isLateBet,time:timeStr},...h.slice(0,49)]);
       setLeaderboard(lb=>{
         const idx=lb.findIndex(e=>e.name==="Bạn");
@@ -1968,7 +1995,7 @@ export default function TaiXiuPage() {
     }
     setJustRevealed(true);
     setShowResultBanner(true);
-    setTimeout(()=>setShowResultBanner(false),3000);
+    setTimeout(()=>setShowResultBanner(false),1000);
     setPhase("RESULT");
     betPlacedAtRef.current=ROUND; // reset for next round
   }
@@ -2082,7 +2109,7 @@ export default function TaiXiuPage() {
             clipPath:"circle(50% at 50% 50%)",
           }}
         >
-          <DiceCupImg size={150}/>
+          <DiceLidImg size={150}/>
         </div>
         {/* Hint "BẤM MỞ" — nhấp nháy bên dưới */}
         {!cupLifting&&(
@@ -2805,6 +2832,36 @@ export default function TaiXiuPage() {
           <div style={{color:"rgba(255,255,255,0.7)",fontSize:10,marginTop:4,lineHeight:1.5}}>
             Đặt cược trong 8 giây cuối.<br/>
             Bên thắng bị hoàn — tiền cược trả về.
+          </div>
+        </div>
+      )}
+
+      {/* Payout toast — thắng/thua thông báo */}
+      {payoutToast&&(
+        <div style={{
+          position:"fixed",bottom:40,left:"50%",transform:"translateX(-50%)",
+          zIndex:90,padding:"12px 28px",borderRadius:20,textAlign:"center",
+          background:payoutToast.won
+            ?"linear-gradient(135deg,rgba(0,40,0,0.97),rgba(0,80,20,0.95))"
+            :"linear-gradient(135deg,rgba(50,0,0,0.97),rgba(100,0,0,0.95))",
+          border:`2px solid ${payoutToast.won?"rgba(80,255,120,0.7)":"rgba(255,80,80,0.7)"}`,
+          boxShadow:payoutToast.won
+            ?"0 0 30px rgba(80,255,120,0.5),0 4px 20px rgba(0,0,0,0.8)"
+            :"0 0 30px rgba(255,80,80,0.4),0 4px 20px rgba(0,0,0,0.8)",
+          animation:"resultSlideIn 0.4s cubic-bezier(.17,.67,.3,1.3) both",
+          minWidth:160,
+        }}>
+          <div style={{
+            fontSize:13,fontWeight:900,letterSpacing:1,marginBottom:3,
+            color:payoutToast.won?"#44ee88":"#ff6666",
+          }}>{payoutToast.won?"🏆 THẮNG":"💔 THUA"}</div>
+          <div style={{
+            fontSize:payoutToast.won?20:15,fontWeight:900,
+            color:payoutToast.won?"#FFD700":"rgba(255,200,200,0.8)",
+            fontFamily:"monospace",letterSpacing:1,
+            textShadow:payoutToast.won?"0 0 12px rgba(255,215,0,0.8)":"none",
+          }}>
+            {payoutToast.won?`+${fmtVN(payoutToast.amount)}₫`:`-${fmtVN(payoutToast.amount)}₫`}
           </div>
         </div>
       )}

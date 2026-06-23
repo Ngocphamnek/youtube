@@ -1,0 +1,8 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "hPaQJci6wIkP3sSJPMEV-"
+uri = "file://artifacts/phela86/src/assets/dice-lid-top.png"
+type = "image"
+title = "dice bowl lid top view"
