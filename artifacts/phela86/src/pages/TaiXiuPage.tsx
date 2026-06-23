@@ -1681,6 +1681,7 @@ export default function TaiXiuPage() {
   const [winResult,setWinResult] = useState<{won:boolean;amount:number}|null>(null);
   const [showResultBanner,setShowResultBanner] = useState(false);
   const [payoutToast,setPayoutToast] = useState<{won:boolean;amount:number}|null>(null);
+  const [winDisplay,setWinDisplay]   = useState<{side:"TAI"|"XIU",amount:number}|null>(null);
   const [justRevealed,setJustRevealed] = useState(false);
   const [handMode,setHandMode] = useState(false);
   const [selectedSide,setSelectedSide] = useState<"TAI"|"XIU"|null>(null);
@@ -1828,7 +1829,7 @@ export default function TaiXiuPage() {
     sessionIdRef.current=next;
     setSessionId(next);
     setPhase("BETTING"); setCountdown(ROUND);
-    setTaiBet(0); setXiuBet(0); setWinResult(null);
+    setTaiBet(0); setXiuBet(0); setWinResult(null); setWinDisplay(null);
     setFakeTaiPool(0); setFakeXiuPool(0);
     setJustRevealed(false); setLidPos(null); setSelectedSide(null); setChip(0); setLidRevealedByDrag(false);
     // Generate fake bettors mỗi phiên (dùng cho điều kiện số người chẵn & hiển thị)
@@ -1999,8 +2000,11 @@ export default function TaiXiuPage() {
       if(won&&!isLateBet) playWin(); else if(!won) playLose();
       const payout={won:won&&!isLateBet,amount:isLateBet&&won?0:Math.abs(profit)};
       setWinResult(payout);
-      setPayoutToast(payout);
-      setTimeout(()=>setPayoutToast(null),4000);
+      if(won&&!isLateBet){
+        setPayoutToast(payout);
+        setTimeout(()=>setPayoutToast(null),4000);
+        setWinDisplay({side:side as "TAI"|"XIU",amount:Math.abs(profit)});
+      }
       setTaiBet(0); setXiuBet(0);
       setBetHistory(h=>[{session:sid,side,amount:betAmount,won:won&&!isLateBet,time:timeStr},...h.slice(0,49)]);
       setLeaderboard(lb=>{
@@ -2102,14 +2106,8 @@ export default function TaiXiuPage() {
       }}>{countdown}</span>
     );
     if(phase==="THROWING"&&handMode) return (
-      // Hand mode: dice are STILL under the draggable lid (no shake)
-      <div style={{position:"relative",display:"flex",flexDirection:"column",alignItems:"center",gap:3}}>
-        <div style={{display:"flex",gap:3}}>
-          <DiceFace val={pendingDice.current[0]} size={30}/>
-          <DiceFace val={pendingDice.current[1]} size={30}/>
-        </div>
-        <DiceFace val={pendingDice.current[2]} size={30}/>
-      </div>
+      // Hand mode: lid covers the circle — dice hidden until lid dragged off
+      <DiceLidImg size={100}/>
     );
     if(phase==="THROWING") return (
       // Auto mode: bát lắc → bấm mở → xúc xắc bay ra
@@ -2120,7 +2118,7 @@ export default function TaiXiuPage() {
           onClick={cupLifting ? undefined : (e)=>{
             e.stopPropagation();
             setCupLifting(true);
-            setTimeout(()=>{ doResultRef.current(); setCupLifting(false); }, 1500);
+            setTimeout(()=>{ doResultRef.current(); setCupLifting(false); }, 500);
           }}
           style={{
             position:"absolute",top:"50%",left:"50%",
@@ -2372,6 +2370,9 @@ export default function TaiXiuPage() {
                 {taiBet>0&&(
                   <div style={{fontSize:11,color:"#FFD700",fontWeight:900,textShadow:"0 0 7px rgba(255,215,0,0.65)"}}>{fmtVN(taiBet)}₫</div>
                 )}
+                {winDisplay?.side==="TAI"&&(
+                  <div style={{fontSize:13,color:"#44ff88",fontWeight:900,textShadow:"0 0 12px rgba(80,255,120,0.8)",animation:"resultSlideIn 0.4s both"}}>+{fmtVN(winDisplay.amount)}₫</div>
+                )}
               </div>
 
               {/* ── Center circle + player counts ── */}
@@ -2416,6 +2417,9 @@ export default function TaiXiuPage() {
                 )}
                 {xiuBet>0&&(
                   <div style={{fontSize:11,color:"#FFD700",fontWeight:900,textShadow:"0 0 7px rgba(255,215,0,0.65)"}}>{fmtVN(xiuBet)}₫</div>
+                )}
+                {winDisplay?.side==="XIU"&&(
+                  <div style={{fontSize:13,color:"#44ff88",fontWeight:900,textShadow:"0 0 12px rgba(80,255,120,0.8)",animation:"resultSlideIn 0.4s both"}}>+{fmtVN(winDisplay.amount)}₫</div>
                 )}
               </div>
               </div>
